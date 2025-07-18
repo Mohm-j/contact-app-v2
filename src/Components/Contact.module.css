@@ -1,0 +1,54 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.head {
+  margin-top: 20px;
+  width: calc(100% - 20px);
+  text-align: center;
+}
+.headItems {
+  padding-inline: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.headItems h2 {
+  color: #304ffe;
+  margin-bottom: 15px;
+}
+.deleteAllBtn {
+  height: 40px;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+  background-color: #304ffe;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background-color: red;
+  color: #fff;
+  transition: 0.2s all ease-in;
+}
+.deleteAllBtn:hover {
+  box-shadow: rgba(209, 40, 40, 0.523) 0px 7px 29px 0px;
+}
+
+@media (max-width: 428px) {
+ .headItems{
+  flex-direction: column;
+  gap: 1rem;
+ }
+}

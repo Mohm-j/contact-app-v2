@@ -1,0 +1,38 @@
+.header {
+  text-align: center;
+}
+
+.header h1 {
+  color: #304ffe;
+  margin-bottom: 20px;
+}
+
+.header p {
+  color: grey;
+}
+
+.header a {
+  text-decoration: none;
+  color: #304ffe;
+  margin-right: 5px;
+  background-color: #bdbefb;
+  padding: 4px 5px;
+  border-radius: 5px;
+  transition: 0.2s all ease-in-out;
+}
+
+.header a:hover {
+  color: #bdbefb;
+  background-color: #304ffe;
+  box-shadow: #0c2ad487 0px 7px 29px 0px;
+}
+
+.footer {
+  width: 100%;
+  text-align: center;
+  background-color: #3874ff;
+  padding: 15px;
+  margin-top: 105px;
+  border-radius: 20px;
+  color: #fff;
+}
