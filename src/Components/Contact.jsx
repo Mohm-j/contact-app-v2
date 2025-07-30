@@ -6,37 +6,57 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import SearchBar from "./SearchBar";
 import { showMsg, validateForm } from "../utils/helper";
+import { addContact, updateContact, deleteAllContacts } from "../services/api";
 
 const Contacts = () => {
   const { state, dispatch } = useContacts();
   const { form, showModal, showEdit, contacts } = state;
 
-  const add = () => {
+  const add = async () => {
     if (!validateForm(form, dispatch)) return;
-    dispatch({ type: "ADD_CONTACT" });
-    dispatch({ type: "RESET_FORM" });
-    showMsg(dispatch, "Contact added", "success");
+
+    try {
+      const newContact = await addContact(form);
+      dispatch({ type: "ADD_CONTACT", payload: newContact }); 
+      dispatch({ type: "RESET_FORM" });
+      showMsg(dispatch, "Contact added", "success");
+    } catch (error) {
+      showMsg(dispatch, "Failed to add contact", "error");
+    }
   };
 
-  const update = () => {
+  const update = async () => {
     if (!validateForm(form, dispatch)) return;
-    dispatch({ type: "UPDATE_CONTACT" });
-    dispatch({ type: "RESET_FORM" });
-    showMsg(dispatch, "Contact updated", "success");
+
+    try {
+      const updated = await updateContact(state.idEdit, form);
+      dispatch({ type: "UPDATE_CONTACT", payload: updated });
+      dispatch({ type: "RESET_FORM" });
+      showMsg(dispatch, "Contact updated", "success");
+    } catch (error) {
+      showMsg(dispatch, "Update failed", "error");
+    }
   };
 
-  const removeAll = (confirmed) => {
+  const removeAll = async (confirmed) => {
     if (!contacts.length) {
       showMsg(dispatch, "No contacts to delete", "error");
       return;
     }
+
     if (!confirmed) {
       dispatch({ type: "TOGGLE_MODAL", payload: true });
       return;
     }
-    dispatch({ type: "REMOVE_ALL_CONTACTS" });
-    dispatch({ type: "TOGGLE_MODAL", payload: false });
-    showMsg(dispatch, "All contacts deleted", "success");
+
+    try {
+      await deleteAllContacts();
+      dispatch({ type: "REMOVE_ALL_CONTACTS" });
+      dispatch({ type: "TOGGLE_MODAL", payload: false });
+      showMsg(dispatch, "All contacts deleted", "success");
+    } catch (error) {
+      showMsg(dispatch, "Failed to delete all", "error");
+    }
   };
 
   return (

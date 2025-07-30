@@ -1,5 +1,5 @@
 import { createContext, useReducer, useEffect, useContext } from "react";
-import { v4 as uuid } from "uuid";
+import { getContacts } from "../services/api";
 
 const initialState = {
   contacts: [],
@@ -56,16 +56,14 @@ const Reducer = (state, action) => {
     case "ADD_CONTACT":
       return {
         ...state,
-        contacts: [...state.contacts, { ...state.form, id: uuid() }],
+        contacts: [...state.contacts, action.payload],
       };
 
     case "UPDATE_CONTACT":
       return {
         ...state,
         contacts: state.contacts.map((contact) =>
-          contact.id === state.idEdit
-            ? { ...state.form, id: state.idEdit }
-            : contact
+          contact.id === state.idEdit ? action.payload : contact
         ),
         idEdit: null,
         showEdit: false,
@@ -99,20 +97,17 @@ export const ContactProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState);
 
   useEffect(() => {
-    const data = localStorage.getItem("contacts");
-    if (data) {
-      dispatch({ type: "LOAD_CONTACTS", payload: JSON.parse(data) });
-    }
+    const fetchData = async () => {
+      try {
+        const contacts = await getContacts();
+        dispatch({ type: "LOAD_CONTACTS", payload: contacts });
+      } catch (error) {
+        console.error("Failed to load contacts", error);
+      }
+    };
+
+    fetchData();
   }, []);
-
-  useEffect(() => {
-    if (state.contacts.length > 0) {
-      localStorage.setItem("contacts", JSON.stringify(state.contacts));
-    } else {
-      localStorage.removeItem("contacts");
-    }
-  }, [state.contacts]);
-
   return (
     <ContactContext.Provider value={{ state, dispatch }}>
       {children}
