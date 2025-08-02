@@ -19,6 +19,7 @@
 }
 
 .modalEdit {
+  width: 50%;
   padding: 20px 30px;
   border-radius: 8px;
 }
@@ -80,9 +81,24 @@
   color: #d4edda;
   scale: 1.05;
 }
+.cancelOnly .cancelBtn {
+  width: 20%;
+  padding: 12px 24px;
+  font-size: 1rem;
+}
 
 @media (max-width: 884px) {
   .modalContent {
     margin-inline: 40px;
+  }
+}
+
+@media (max-width: 500px) {
+  .modalContent {
+    width: 100%;
+    margin: 0;
+  }
+  .cancelOnly .cancelBtn{
+    width: 50%;
   }
 }

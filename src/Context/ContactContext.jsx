@@ -44,6 +44,13 @@ const Reducer = (state, action) => {
     case "SET_SHOW_SEARCH":
       return { ...state, showSearch: action.payload };
 
+    case "CLOSE_EDIT_MODAL":
+      return {
+        ...state,
+        showEdit: false,
+        form: initialState.form,
+        idEdit: null,
+      };
     case "TOGGLE_MODAL":
       return { ...state, showModal: action.payload };
 
@@ -77,6 +84,14 @@ const Reducer = (state, action) => {
 
     case "REMOVE_ALL_CONTACTS":
       return { ...state, contacts: [] };
+
+    case "CONFIRM_DELETE_ALL":
+      return {
+        ...state,
+        showModal: false,
+        contacts: [],
+        search: "",
+      };
 
     case "SET_EDIT_FORM":
       return {
