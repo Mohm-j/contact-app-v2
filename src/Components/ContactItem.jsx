@@ -1,4 +1,3 @@
-import { useContacts } from "../context/ContactContext";
 import styles from "./ContactItem.module.css";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineMail } from "react-icons/hi";
@@ -6,6 +5,9 @@ import { FiPhone } from "react-icons/fi";
 import { FaRegEdit } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { showMsg } from "../utils/helper";
+import { deleteContact } from "../services/api";
+
+import { useContacts } from "../context/ContactContext";
 
 const ContactItem = ({ contact }) => {
   const { dispatch } = useContacts();
@@ -15,9 +17,14 @@ const ContactItem = ({ contact }) => {
     dispatch({ type: "SET_EDIT_FORM", payload: contact });
   };
 
-  const handleDelete = () => {
-    dispatch({ type: "REMOVE_CONTACT", payload: id });
-    showMsg(dispatch, "Contact deleted", "error"); 
+  const handleDelete = async () => {
+    try {
+      await deleteContact(id);
+      dispatch({ type: "REMOVE_CONTACT", payload: id });
+      showMsg(dispatch, "Contact deleted", "error");
+    } catch (error) {
+      showMsg(dispatch, "Failed to delete contact", "error");
+    }
   };
 
   return (

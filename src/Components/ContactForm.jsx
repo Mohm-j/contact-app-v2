@@ -1,37 +1,55 @@
-import { useContacts } from "../context/ContactContext";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { contactSchema } from "../validation/contactSchema";
 import styles from "./ContactForm.module.css";
+import { useEffect } from "react";
 
-const fields = ["name", "lastName", "email", "phone"];
+const fields = [
+  { name: "name", type: "text", placeholder: "Name..." },
+  { name: "lastName", type: "text", placeholder: "Last Name..." },
+  { name: "email", type: "email", placeholder: "Email..." },
+  { name: "phone", type: "text", placeholder: "Phone..." },
+];
 
-const ContactForm = ({ isEdit, onSubmit }) => {
-  const { state, dispatch } = useContacts();
-  const { form } = state;
+const ContactForm = ({ isEdit, onSubmit, initialValues = {} }) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(contactSchema),
+    defaultValues: initialValues,
+  });
 
-  const handleChange = (e) => {
-    dispatch({
-      type: "SET_FORM",
-      payload: { name: e.target.name, value: e.target.value },
-    });
+  useEffect(() => {
+    if (isEdit && initialValues) {
+      reset(initialValues);
+    }
+  }, [isEdit, reset, initialValues?.id]);
+
+  const submitHandler = (data) => {
+    onSubmit(data);
+    reset();
   };
 
   return (
-    <div className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
       {fields.map((field) => (
-        <input
-          key={field}
-          type={
-            field === "email" ? "email" : field === "phone" ? "number" : "text"
-          }
-          name={field}
-          placeholder={`${field[0].toUpperCase() + field.slice(1)}...`}
-          value={form[field]}
-          onChange={handleChange}
-          className={styles.input}
-        />
+        <div key={field.name} className={styles.container}>
+          {errors[field.name] && (
+            <p className={styles.error}>{errors[field.name].message}</p>
+          )}
+          <input
+            type={field.type}
+            placeholder={field.placeholder}
+            {...register(field.name)}
+            className={styles.input}
+          />
+        </div>
       ))}
-
-      {!isEdit && <button onClick={onSubmit}>Add Contact</button>}
-    </div>
+      <button type="submit">{isEdit ? "Update Contact" : "Add Contact"}</button>
+    </form>
   );
 };
 

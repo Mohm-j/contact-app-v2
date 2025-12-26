@@ -1,5 +1,6 @@
 .form {
   display: flex;
+  gap: 50px;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -8,9 +9,13 @@
   border-radius: 20px;
   box-shadow: #304ffe25 0px 7px 29px 0px;
 }
-
-.form input {
+.container {
   width: 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container .input {
   margin: 20px;
   height: 40px;
   padding: 25px;
@@ -50,19 +55,22 @@
 .form button:hover {
   box-shadow: #0c2ad487 0px 7px 29px 0px;
 }
+.error {
+  display: flex;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: red;
+}
 
 @media (max-width: 884px) {
   .form input {
-    width: 40%;
+    width: 85%;
   }
   .form button {
     margin-top: 30px;
     width: 85%;
   }
-}
-
-@media (max-width: 428px) {
-  .form input {
-    width: 100%;
+  .container {
+    width: 40%;
   }
 }

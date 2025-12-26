@@ -46,7 +46,7 @@
   box-shadow: rgba(209, 40, 40, 0.523) 0px 7px 29px 0px;
 }
 
-@media (max-width: 428px) {
+@media (max-width: 765px) {
  .headItems{
   flex-direction: column;
   gap: 1rem;

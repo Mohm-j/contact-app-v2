@@ -5,38 +5,51 @@ import ContactList from "./ContactList";
 import Modal from "./Modal";
 import Alert from "./Alert";
 import SearchBar from "./SearchBar";
-import { showMsg, validateForm } from "../utils/helper";
+import { showMsg } from "../utils/helper";
+import { addContact, updateContact, deleteAllContacts } from "../services/api";
 
 const Contacts = () => {
   const { state, dispatch } = useContacts();
-  const { form, showModal, showEdit, contacts } = state;
+  const { showModal, showEdit, contacts } = state;
 
-  const add = () => {
-    if (!validateForm(form, dispatch)) return;
-    dispatch({ type: "ADD_CONTACT" });
-    dispatch({ type: "RESET_FORM" });
-    showMsg(dispatch, "Contact added", "success");
+  const add = async (data) => {
+    try {
+      const newContact = await addContact(data);
+      dispatch({ type: "ADD_CONTACT", payload: newContact });
+      showMsg(dispatch, "Contact added", "success");
+    } catch (error) {
+      showMsg(dispatch, "Failed to add contact", "error");
+    }
   };
 
-  const update = () => {
-    if (!validateForm(form, dispatch)) return;
-    dispatch({ type: "UPDATE_CONTACT" });
-    dispatch({ type: "RESET_FORM" });
-    showMsg(dispatch, "Contact updated", "success");
+  const update = async (data) => {
+    try {
+      const updated = await updateContact(state.idEdit, data);
+      dispatch({ type: "UPDATE_CONTACT", payload: updated });
+      showMsg(dispatch, "Contact updated", "success");
+    } catch (error) {
+      showMsg(dispatch, "Update failed", "error");
+    }
   };
 
-  const removeAll = (confirmed) => {
+  const removeAll = async (confirmed) => {
     if (!contacts.length) {
       showMsg(dispatch, "No contacts to delete", "error");
       return;
     }
+
     if (!confirmed) {
       dispatch({ type: "TOGGLE_MODAL", payload: true });
       return;
     }
-    dispatch({ type: "REMOVE_ALL_CONTACTS" });
-    dispatch({ type: "TOGGLE_MODAL", payload: false });
-    showMsg(dispatch, "All contacts deleted", "success");
+
+    try {
+      await deleteAllContacts();
+      dispatch({ type: "CONFIRM_DELETE_ALL" });
+      showMsg(dispatch, "All contacts deleted", "success");
+    } catch (error) {
+      showMsg(dispatch, "Failed to delete all", "error");
+    }
   };
 
   return (
@@ -56,22 +69,25 @@ const Contacts = () => {
 
       {showModal && (
         <Modal
+          variant="delete"
           onConfirm={() => removeAll(true)}
           onCancel={() => dispatch({ type: "TOGGLE_MODAL", payload: false })}
-          variant="delete"
         />
       )}
 
       {showEdit && (
         <Modal
-          onConfirm={update}
+          variant="edit"
           onCancel={() => {
-            dispatch({ type: "SET_SHOW_EDIT", payload: false });
-            dispatch({ type: "RESET_FORM" });
+            dispatch({ type: "CLOSE_EDIT_MODAL" });
           }}
         >
           <h3>Edit Contact</h3>
-          <ContactForm isEdit={true} onSubmit={update} />
+          <ContactForm
+            isEdit={true}
+            onSubmit={update}
+            initialValues={state.form}
+          />
         </Modal>
       )}
 
